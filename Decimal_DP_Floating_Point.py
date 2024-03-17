@@ -2,9 +2,8 @@
 List of TODOs:
     1. TODO: Implement Rounding
     2. TODO: Add other special test cases for the combination field
-    3. TODO: Convert Binary Output to Hexadecimal
-    4. TODO: Provide an option for the user to download the output
-    5. TODO: Implement GUI
+    3. TODO: Provide an option for the user to download the output
+    4. TODO: Implement GUI
 '''
 
 #get input from user
@@ -242,13 +241,48 @@ def get_densely_packed_bcd(three_digits):
 # MAJOR FUNCTION
 def get_coefficient_continuation(decimal_input):
   coefficient_digits = decimal_input[1:]
-  coefficient_binary = ""
+  coefficient_binary = []
   for i in range(5):
     three_digits = coefficient_digits[i * 3: (i+1) * 3]
-    coefficient_binary = coefficient_binary + get_densely_packed_bcd(three_digits) + " "
+    coefficient_binary.append(get_densely_packed_bcd(three_digits))
   return coefficient_binary
 
+#multiply binary digits to their place value and return its corresponding hexadecimal value
+# HELPER FUNCTION
+def convert_four_binary_to_hexadecimal(four_binary_digits):
+  eight, four, two, one = [int(digit) for digit in four_binary_digits]
+  eight *= 8
+  four *= 4
+  two *= 2
+  
+  total = eight + four + two + one
+  hexadecimal_equivalent = ""
+  
+  if total < 10:
+    hexadecimal_equivalent = str(total)
+  elif total == 10:
+    hexadecimal_equivalent = "A"
+  elif total == 11:
+    hexadecimal_equivalent = "B"
+  elif total == 12:
+    hexadecimal_equivalent = "C"
+  elif total == 13:
+    hexadecimal_equivalent = "D"
+  elif total == 14:
+    hexadecimal_equivalent = "E"
+  else:
+    hexadecimal_equivalent = "F"
+    
+  return hexadecimal_equivalent
 
+#convert binary to hexadecimal
+# MAJOR FUNCTION
+def convert_output_to_hexadecimal(binary_output):
+  hexadecimal_digits = ""
+  for i in range(16):
+    four_binary_digits = binary_output[i * 4: (i+1) * 4]
+    hexadecimal_digits = hexadecimal_digits + convert_four_binary_to_hexadecimal(four_binary_digits)
+  return hexadecimal_digits
 
 # BEGIN
 
@@ -295,12 +329,24 @@ print("Combination Field: ", combination_field)
 print("Exponent Extension: ", exponent_extension)
 
 #Coefficient Continuation
-print("Coefficient Continuation: ", coefficient_continuation)
+print("Coefficient Continuation: ", end = '')
+for bcd in coefficient_continuation:
+  print(bcd, end = ' ')
 
 print()
 
 #Print all into one binary output
-print("Binary Output: " + sign_bit + " " + combination_field + " " + exponent_extension + " " + coefficient_continuation)
+print("Binary Output: " + sign_bit + " " + combination_field + " " + exponent_extension + " ", end = '')
+for bcd in coefficient_continuation:
+  print(bcd, end = ' ')
 
-#TODO: Convert Binary Output to Hexadecimal
+print()
+
+binary_output = sign_bit + combination_field + exponent_extension
+for bcd in coefficient_continuation:
+  binary_output = binary_output + bcd
+
+hexadecimal_output = convert_output_to_hexadecimal(binary_output)
+print("Hexadecimal Output: " + hexadecimal_output)
+
 #TODO: Provide an option for the user to download the output
