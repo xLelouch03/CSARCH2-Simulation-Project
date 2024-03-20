@@ -2,8 +2,6 @@
 List of TODOs:
     1. TODO: Implement Rounding
     2. TODO: Add other special test cases for the combination field
-    3. TODO: Provide an option for the user to download the output
-    4. TODO: Implement GUI
 '''
 import tkinter as tk
 from tkinter import messagebox
@@ -309,29 +307,24 @@ def convert_output_to_hexadecimal(binary_output):
 
 # BEGIN
 
-#TODO: Provide an option for the user to download the output
-
-# Function to validate decimal input
 def validate_decimal_input(decimal_input):
     if not decimal_input:
         messagebox.showerror("Error", "Decimal input cannot be empty")
         return False
     return True
 
-# Function to validate ten_raised_to input
 def validate_ten_raised_to_input(ten_raised_to):
     if not ten_raised_to:
-        messagebox.showerror("Error", "10 raised to value cannot be empty")
+        messagebox.showerror("Error", "Exponent field cannot be empty")
         return False
     return True
 
-# Function to get input from the GUI entry widgets
+# Function to get input from the GUI
 def get_input_from_gui():
     decimal_input = decimal_entry.get()
     ten_raised_to = exponent_entry.get()
     rounding_type = rounding_combobox.get()
 
-    # Validate inputs
     if not validate_decimal_input(decimal_input):
         return None, None, None
     if not validate_ten_raised_to_input(ten_raised_to):
@@ -367,8 +360,8 @@ def convert_and_display_output():
     decimal_input, exponent = normalize_decimal(decimal_input, ten_raised_to, rounding_type)
     combination_field, exponent_extension = get_combination_field_and_exponent_extension(decimal_input, exponent)
     coefficient_continuation = get_coefficient_continuation(decimal_input)
-    exp_prime = get_exponent_prime(exponent)  # Get Exponent Prime
-    exp_prime_binary = transform_exponent_prime_to_binary(exp_prime)  # Get Exponent Prime Binary
+    exp_prime = get_exponent_prime(exponent) 
+    exp_prime_binary = transform_exponent_prime_to_binary(exp_prime) 
     display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary)
 
 # Function to save the output when Save Output button is clicked
@@ -380,14 +373,14 @@ def save_output():
             file.write(output_text_content)
         messagebox.showinfo("Success", "Output saved successfully!")
 
-# Create the main GUI window
+# Create the root window
 root = tk.Tk()
 root.title("Decimal Converter")
 
 # Set the size of the window
-root.geometry("900x500")  # Adjust the width and height as needed
+root.geometry("900x500") 
 
-# GUI elements for input
+# Input GUI elements
 decimal_label = tk.Label(root, text="Decimal:")
 decimal_label.grid(row=0, column=3)
 
@@ -403,12 +396,12 @@ exponent_entry.grid(row=1, column=4)
 rounding_label = tk.Label(root, text="Rounding Type:")
 rounding_label.grid(row=2, column=3)
 
-# Use Combobox instead of Entry for the rounding type
+# Rounding type dropdown
 rounding_combobox = ttk.Combobox(root, values=["truncate", "floor", "ceiling", "nearest"])
 rounding_combobox.grid(row=2, column=4)
 rounding_combobox.current(0)  # Set the default value to "truncate"
 
-# Convert button to trigger conversion and display output
+# Convert button for conversion and display output
 convert_button = tk.Button(root, text="Convert", command=convert_and_display_output)
 convert_button.grid(row=3, column=4)
 
@@ -416,7 +409,7 @@ convert_button.grid(row=3, column=4)
 save_button = tk.Button(root, text="Save Output", command=save_output)
 save_button.grid(row=4, column=4)
 
-# GUI text widget to display output
+# GUI element for output
 output_text = tk.Text(root, height=10, width=100)  
 output_text.grid(row=5, columnspan=10)
 
