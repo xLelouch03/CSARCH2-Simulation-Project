@@ -30,9 +30,30 @@ def limit_to_16_digits(decimal_input, exponent, rounding_type):
 
   #NOTE: else if it is more than 16 digits, round the decimal to 16 digits
   
-  #else:
+  else:
+        # Implement rounding if the input decimal has more than 16 digits
+        if rounding_type == 'truncate':
+            decimal_input = decimal_input[:16]
+        elif rounding_type == 'floor':
+            decimal_input = decimal_input[:16]
+        elif rounding_type == 'ceiling':
+            # Adjust the exponent if rounding changes the value
+            original_decimal = int(decimal_input[:16])
+            rounded_decimal = original_decimal + 1
+            if rounded_decimal % 10 == 0:
+                exponent += 1
+            decimal_input = str(rounded_decimal)
+        elif rounding_type == 'nearest':
+            original_decimal = int(decimal_input[:16])
+            rounded_decimal = original_decimal + 1 if int(decimal_input[16]) >= 5 else original_decimal
+            if rounded_decimal % 10 == 0 and original_decimal % 10 != 9:
+                exponent += 1
+            decimal_input = str(rounded_decimal)
 
     #TODO:Implement Rounding
+  # Ensure that the decimal is limited to 16 digits
+  if len(decimal_input) > 16:
+      decimal_input = decimal_input[:16]
 
   return decimal_input, exponent
 
