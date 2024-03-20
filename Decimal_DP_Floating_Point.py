@@ -5,6 +5,10 @@ List of TODOs:
     3. TODO: Provide an option for the user to download the output
     4. TODO: Implement GUI
 '''
+import tkinter as tk
+from tkinter import messagebox
+from tkinter import filedialog
+from tkinter import ttk
 
 #get input from user
 # MAJOR FUNCTION
@@ -115,7 +119,6 @@ def transform_msd_to_binary(msd):
 # HELPER FUNCTION
 def get_exponent_prime(exponent):
   exp_prime = exponent + 398
-  print("Exponent Prime: ", exp_prime)
   return exp_prime
 
 #change e prime to binary
@@ -123,7 +126,6 @@ def get_exponent_prime(exponent):
 def transform_exponent_prime_to_binary(exp_prime):
   exp_prime_binary = bin(exp_prime)
   exp_prime_binary = exp_prime_binary[2:].zfill(10)
-  print("Exponent Prime Binary: ", exp_prime_binary)
   return exp_prime_binary
 
 #get the exponent extention from the e prime in binary
@@ -307,67 +309,115 @@ def convert_output_to_hexadecimal(binary_output):
 
 # BEGIN
 
-#get input from user for the decimal_input, exponent of 10, and how the user wants the number to be rounded
-decimal_input, ten_raised_to, rounding_type = get_input_from_user()
-
-#first obtain the sign bit
-sign_bit = get_sign_bit(decimal_input)
-
-#if it is negative, we change it to positive for the next calculations
-if sign_bit == "1":
-  decimal_input = turn_decimal_positive(decimal_input)
-
-#normalize the decimal by removing the decimal point, adding trailing zeroes if needed, and round off if needed
-decimal_input, exponent = normalize_decimal(decimal_input, ten_raised_to, rounding_type)
-
-#get the combination field (5 bits) and the exponent extension (8 bits)
-#this PRINTS Exponent Prime and Exponent Prime in Binary
-combination_field, exponent_extension = get_combination_field_and_exponent_extension(decimal_input, exponent)
-
-#get the coefficient continuation in bcd format of the remaining digits
-coefficient_continuation = get_coefficient_continuation(decimal_input)
-
-#print out the output
-
-#Exponent Prime and Exponent Prime in Binary (output from above)
-
-#Normalized Decimal
-print("Normalized Decimal: ", end = '')
-if sign_bit == '1':
-  print("-", end = '')
-print(decimal_input)
-
-#Normalized Exponent
-print("Normalized Exponent: ", exponent)
-
-#Sign Bit
-print("Sign Bit: ", sign_bit)
-
-#Combination Field
-print("Combination Field: ", combination_field)
-
-#Exponent Extension
-print("Exponent Extension: ", exponent_extension)
-
-#Coefficient Continuation
-print("Coefficient Continuation: ", end = '')
-for bcd in coefficient_continuation:
-  print(bcd, end = ' ')
-
-print()
-
-#Print all into one binary output
-print("Binary Output: " + sign_bit + " " + combination_field + " " + exponent_extension + " ", end = '')
-for bcd in coefficient_continuation:
-  print(bcd, end = ' ')
-
-print()
-
-binary_output = sign_bit + combination_field + exponent_extension
-for bcd in coefficient_continuation:
-  binary_output = binary_output + bcd
-
-hexadecimal_output = convert_output_to_hexadecimal(binary_output)
-print("Hexadecimal Output: " + hexadecimal_output)
-
 #TODO: Provide an option for the user to download the output
+
+# Function to validate decimal input
+def validate_decimal_input(decimal_input):
+    if not decimal_input:
+        messagebox.showerror("Error", "Decimal input cannot be empty")
+        return False
+    return True
+
+# Function to validate ten_raised_to input
+def validate_ten_raised_to_input(ten_raised_to):
+    if not ten_raised_to:
+        messagebox.showerror("Error", "10 raised to value cannot be empty")
+        return False
+    return True
+
+# Function to get input from the GUI entry widgets
+def get_input_from_gui():
+    decimal_input = decimal_entry.get()
+    ten_raised_to = exponent_entry.get()
+    rounding_type = rounding_combobox.get()
+
+    # Validate inputs
+    if not validate_decimal_input(decimal_input):
+        return None, None, None
+    if not validate_ten_raised_to_input(ten_raised_to):
+        return None, None, None
+
+    return decimal_input, int(ten_raised_to), rounding_type
+
+# Function to display the output in the GUI text widget
+def display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary):
+    output_text.delete(1.0, tk.END)
+    output_text.insert(tk.END, f"Normalized Decimal: {'-' if sign_bit == '1' else ''}{decimal_input}\n")
+    output_text.insert(tk.END, f"Normalized Exponent: {exponent}\n")
+    output_text.insert(tk.END, f"Exponent Prime: {exp_prime}\n") 
+    output_text.insert(tk.END, f"Exponent Prime Binary: {exp_prime_binary}\n")  
+    output_text.insert(tk.END, f"Sign Bit: {sign_bit}\n")
+    output_text.insert(tk.END, f"Combination Field: {combination_field}\n")
+    output_text.insert(tk.END, f"Exponent Extension: {exponent_extension}\n")
+    output_text.insert(tk.END, "Coefficient Continuation: " + ' '.join(coefficient_continuation) + "\n")
+    binary_output = sign_bit + combination_field + exponent_extension + ''.join(coefficient_continuation)
+    hexadecimal_output = convert_output_to_hexadecimal(binary_output)
+    binary_output_with_spaces = sign_bit + " " +  combination_field + " " + exponent_extension + " " + ''.join([' '.join(bits) for bits in [coefficient_continuation[i:i+10] for i in range(0, len(coefficient_continuation), 10)]])
+    output_text.insert(tk.END, f"Binary Output: {binary_output_with_spaces}\n")
+    output_text.insert(tk.END, f"Hexadecimal Output: {hexadecimal_output}\n")
+
+# Function to convert and display output when Convert button is clicked
+def convert_and_display_output():
+    decimal_input, ten_raised_to, rounding_type = get_input_from_gui()  
+    if decimal_input is None or ten_raised_to is None or rounding_type is None:
+        return
+    sign_bit = get_sign_bit(decimal_input) 
+    if sign_bit == "1": 
+        decimal_input = turn_decimal_positive(decimal_input)
+    decimal_input, exponent = normalize_decimal(decimal_input, ten_raised_to, rounding_type)
+    combination_field, exponent_extension = get_combination_field_and_exponent_extension(decimal_input, exponent)
+    coefficient_continuation = get_coefficient_continuation(decimal_input)
+    exp_prime = get_exponent_prime(exponent)  # Get Exponent Prime
+    exp_prime_binary = transform_exponent_prime_to_binary(exp_prime)  # Get Exponent Prime Binary
+    display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary)
+
+# Function to save the output when Save Output button is clicked
+def save_output():
+    output_text_content = output_text.get(1.0, tk.END)
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+    if file_path:
+        with open(file_path, "w") as file:
+            file.write(output_text_content)
+        messagebox.showinfo("Success", "Output saved successfully!")
+
+# Create the main GUI window
+root = tk.Tk()
+root.title("Decimal Converter")
+
+# Set the size of the window
+root.geometry("900x500")  # Adjust the width and height as needed
+
+# GUI elements for input
+decimal_label = tk.Label(root, text="Decimal:")
+decimal_label.grid(row=0, column=3)
+
+decimal_entry = tk.Entry(root)
+decimal_entry.grid(row=0, column=4)
+
+exponent_label = tk.Label(root, text="10 raised to:")
+exponent_label.grid(row=1, column=3)
+
+exponent_entry = tk.Entry(root)
+exponent_entry.grid(row=1, column=4)
+
+rounding_label = tk.Label(root, text="Rounding Type:")
+rounding_label.grid(row=2, column=3)
+
+# Use Combobox instead of Entry for the rounding type
+rounding_combobox = ttk.Combobox(root, values=["truncate", "floor", "ceiling", "nearest"])
+rounding_combobox.grid(row=2, column=4)
+rounding_combobox.current(0)  # Set the default value to "truncate"
+
+# Convert button to trigger conversion and display output
+convert_button = tk.Button(root, text="Convert", command=convert_and_display_output)
+convert_button.grid(row=3, column=4)
+
+# Save Output button to save the output
+save_button = tk.Button(root, text="Save Output", command=save_output)
+save_button.grid(row=4, column=4)
+
+# GUI text widget to display output
+output_text = tk.Text(root, height=10, width=100)  
+output_text.grid(row=5, columnspan=10)
+
+root.mainloop()
