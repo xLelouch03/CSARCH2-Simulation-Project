@@ -133,8 +133,9 @@ def get_exponent_extension(exp_prime_binary):
   return exp_extension
 
 #calculate the combination field and the exponent extension
-# MAJOR FUNCTION
+# MAJOR FUNCTION    
 def get_combination_field_and_exponent_extension(decimal_input, exponent):
+    
   msd = get_msd(decimal_input)
   msd_binary = transform_msd_to_binary(msd)
   exponent_prime = get_exponent_prime(exponent)
@@ -148,6 +149,22 @@ def get_combination_field_and_exponent_extension(decimal_input, exponent):
   exponent_extension = get_exponent_extension(exp_prime_binary)
 
   #TODO: Add other special cases
+  
+ # Special case for positive infinity
+  if decimal_input == "inf" and exponent == 420:
+      combi_field = "11000000"  # Combination field for positive infinity
+      exponent_extension = "00000000"  # Exponent extension for positive infinity
+
+# Special case for negative infinity
+  if decimal_input == "-inf" and exponent == 999:
+      combi_field = "11111111"  # Combination field for negative infinity
+      exponent_extension = "00000000"  # Exponent extension for negative infinity
+      
+# Special case: denormalized with exponent -999
+  if len(decimal_input) <= 16 and exponent == -999:
+      # Set combination field to '000000' and exponent extension to '00000000'
+      return '000000', '00000000'
+
 
   return combi_field, exponent_extension
 
@@ -311,9 +328,11 @@ def validate_decimal_input(decimal_input):
     if not decimal_input:
         messagebox.showerror("Error", "Decimal input cannot be empty")
         return False
+    '''
     if not decimal_input.replace('.', '', 1).isdigit():  
         messagebox.showerror("Error", "Decimal input must be numeric")
         return False
+    '''
       
     return True
 
@@ -321,11 +340,13 @@ def validate_ten_raised_to_input(ten_raised_to):
     if not ten_raised_to:
         messagebox.showerror("Error", "Exponent field cannot be empty")
         return False
+    '''
     if not ten_raised_to.isdigit():  
         messagebox.showerror("Error", "Exponent field must be numeric")
         return False
+        '''
     return True
-
+#
 # Function to get input from the GUI
 def get_input_from_gui():
     decimal_input = decimal_entry.get()
