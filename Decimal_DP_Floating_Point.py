@@ -311,11 +311,18 @@ def validate_decimal_input(decimal_input):
     if not decimal_input:
         messagebox.showerror("Error", "Decimal input cannot be empty")
         return False
+    if not decimal_input.replace('.', '', 1).isdigit():  
+        messagebox.showerror("Error", "Decimal input must be numeric")
+        return False
+      
     return True
 
 def validate_ten_raised_to_input(ten_raised_to):
     if not ten_raised_to:
         messagebox.showerror("Error", "Exponent field cannot be empty")
+        return False
+    if not ten_raised_to.isdigit():  
+        messagebox.showerror("Error", "Exponent field must be numeric")
         return False
     return True
 
@@ -329,7 +336,12 @@ def get_input_from_gui():
         return None, None, None
     if not validate_ten_raised_to_input(ten_raised_to):
         return None, None, None
-
+      
+    try:
+        ten_raised_to_int = int(ten_raised_to)
+    except ValueError:
+        messagebox.showerror("Error", "Fields must be numeric")
+        return None, None, None  
     return decimal_input, int(ten_raised_to), rounding_type
 
 # Function to display the output in the GUI text widget
