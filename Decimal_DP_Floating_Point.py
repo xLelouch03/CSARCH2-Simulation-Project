@@ -365,6 +365,12 @@ def get_input_from_gui():
     ten_raised_to = exponent_entry.get()
     rounding_type = rounding_combobox.get()
     
+    if decimal_input == "0":
+      display_output_in_gui("0", "", "", "00000", "00000000", ["00000000"]*5, "", "")
+      output_text.insert(tk.END, f"Binary Output: 0 00000 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
+      output_text.insert(tk.END, f"Hexadecimal Output: 0000000000000000\n")
+      return None, None, None
+      
     if not all(char.isdigit() or char == '-' for char in decimal_input):
         # Set output fields for non-numeric input
         display_output_in_gui("0", "", "", "11111", "00000000", ["00000000"]*5, "", "")
