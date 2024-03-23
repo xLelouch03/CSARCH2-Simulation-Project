@@ -157,24 +157,39 @@ def get_combination_field_and_exponent_extension(decimal_input, exponent):
   exponent_extension = get_exponent_extension(exp_prime_binary)
 
   #TODO: Add other special cases
+def handle_special_cases(exponent):
+    if exponent >= 420:  # Positive infinity
+        sign_bit = "0"
+        combination_field = "11110"
+        exponent_extension = "000000000"
+        coefficient_continuation = ["0000000000"] * 5
+        if get_exponent_prime(exponent) > 767:
+          exponent = ""
+          exp_prime = ""
+          exp_prime_binary = ""
+          decimal_input = "inf"
+    elif exponent <= -999:  # Negative infinity
+        sign_bit = "1"
+        combination_field = "11111"
+        exponent_extension = "000000000"
+        coefficient_continuation = ["0000000000"] * 5
+        if get_exponent_prime(exponent) > 767:
+          exponent = ""
+          exp_prime = ""
+          exp_prime_binary = ""
+          decimal_input = "-inf"  # Set normalized decimal to "-inf"
+    elif exponent < -398:  # Denormalized number
+        sign_bit = "0" if decimal_input.startswith("0.") else "1" # Set sign bit based on original decimal input
+        combination_field = "00000"
+        exponent_extension = "000000000"
+        coefficient_continuation = ["0000000000"] * 5
+        exp_prime = get_exponent_prime(exponent)
+        exp_prime_binary = "00000000000"
+    else:
+        return None  # No special case detected, return None
+    
+    return sign_bit, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary, decimal_input
   
- # Special case for positive infinity
-  if decimal_input == "inf" and exponent == 420:
-      combi_field = "11000000"  # Combination field for positive infinity
-      exponent_extension = "00000000"  # Exponent extension for positive infinity
-
-# Special case for negative infinity
-  if decimal_input == "-inf" and exponent == 999:
-      combi_field = "11111111"  # Combination field for negative infinity
-      exponent_extension = "00000000"  # Exponent extension for negative infinity
-      
-# Special case: denormalized with exponent -999
-  if len(decimal_input) <= 16 and exponent == -999:
-      # Set combination field to '000000' and exponent extension to '00000000'
-      return '000000', '00000000'
-
-
-  return combi_field, exponent_extension
 
 #calculate for the densely packed bcd of three digits
 # HELPER FUNCTION
@@ -384,14 +399,20 @@ def convert_and_display_output():
     decimal_input, ten_raised_to, rounding_type = get_input_from_gui()  
     if decimal_input is None or ten_raised_to is None or rounding_type is None:
         return
-    sign_bit = get_sign_bit(decimal_input) 
+    sign_bit = get_sign_bit(decimal_input)
     if sign_bit == "1": 
         decimal_input = turn_decimal_positive(decimal_input)
     decimal_input, exponent = normalize_decimal(decimal_input, ten_raised_to, rounding_type, sign_bit)
-    combination_field, exponent_extension = get_combination_field_and_exponent_extension(decimal_input, exponent)
-    coefficient_continuation = get_coefficient_continuation(decimal_input)
-    exp_prime = get_exponent_prime(exponent) 
-    exp_prime_binary = transform_exponent_prime_to_binary(exp_prime) 
+    
+    special_case_result = handle_special_cases(exponent)
+    if special_case_result:
+        sign_bit, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary, decimal_input = special_case_result
+    else:
+      combination_field, exponent_extension = get_combination_field_and_exponent_extension(decimal_input, exponent)
+      coefficient_continuation = get_coefficient_continuation(decimal_input)
+      exp_prime = get_exponent_prime(exponent) 
+      exp_prime_binary = transform_exponent_prime_to_binary(exp_prime) 
+      
     display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary)
 
 # Function to save the output when Save Output button is clicked
