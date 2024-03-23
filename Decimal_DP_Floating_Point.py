@@ -179,9 +179,9 @@ def get_combination_field_and_exponent_extension(decimal_input, exponent):
 #calculate for the densely packed bcd of three digits
 # HELPER FUNCTION
 def get_densely_packed_bcd(three_digits):
-  first = int(three_digits[0])
-  second = int(three_digits[1])
-  third = int(three_digits[2])
+  first = int(three_digits[0]) if three_digits[0].isdigit() else 0
+  second = int(three_digits[1]) if three_digits[1].isdigit() else 0
+  third = int(three_digits[2]) if three_digits[2].isdigit() else 0
 
   first_binary = bin(first)[2:].zfill(4)
   second_binary = bin(second)[2:].zfill(4)
@@ -349,6 +349,11 @@ def get_input_from_gui():
     decimal_input = decimal_entry.get()
     ten_raised_to = exponent_entry.get()
     rounding_type = rounding_combobox.get()
+    
+    if not all(char.isdigit() or char == '-' for char in decimal_input):
+        # Set output fields for non-numeric input
+        display_output_in_gui("0", "00000", "00000000", "11111", "00000000", ["00000000"]*5, "0000000000", "00000000000")
+        return None, None, None
 
     if not validate_decimal_input(decimal_input):
         return None, None, None
