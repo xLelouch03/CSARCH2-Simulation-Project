@@ -384,10 +384,6 @@ def get_input_from_gui():
     if decimal_input == "0" or decimal_input == "-0":
       display_output_in_gui("0", "0000000000000000", "0", "01000", "10001110", ["00000000"]*5, "398", "0110001110")
       return None, None, None
-      
-    if exponent_input < "-398":
-      output_text.insert(tk.END, f"Hexadecimal Output: 2238 0000 0000 0000")
-      return None
     
     if not all(char.isdigit() or char == '-' for char in decimal_input):
         # Set output fields for non-numeric input
