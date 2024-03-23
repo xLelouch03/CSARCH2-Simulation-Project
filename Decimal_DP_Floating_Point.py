@@ -194,9 +194,9 @@ def handle_special_cases(exponent):
 #calculate for the densely packed bcd of three digits
 # HELPER FUNCTION
 def get_densely_packed_bcd(three_digits):
-  first = int(three_digits[0])
-  second = int(three_digits[1])
-  third = int(three_digits[2])
+  first = int(three_digits[0]) if three_digits[0].isdigit() else 0
+  second = int(three_digits[1]) if three_digits[1].isdigit() else 0
+  third = int(three_digits[2]) if three_digits[2].isdigit() else 0
 
   first_binary = bin(first)[2:].zfill(4)
   second_binary = bin(second)[2:].zfill(4)
@@ -364,6 +364,11 @@ def get_input_from_gui():
     decimal_input = decimal_entry.get()
     ten_raised_to = exponent_entry.get()
     rounding_type = rounding_combobox.get()
+    
+    if not all(char.isdigit() or char == '-' for char in decimal_input):
+        # Set output fields for non-numeric input
+        display_output_in_gui("0", "", "", "11111", "00000000", ["00000000"]*5, "", "")
+        return None, None, None
 
     if not validate_decimal_input(decimal_input):
         return None, None, None
@@ -388,11 +393,16 @@ def display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, 
     output_text.insert(tk.END, f"Combination Field: {combination_field}\n")
     output_text.insert(tk.END, f"Exponent Extension: {exponent_extension}\n")
     output_text.insert(tk.END, "Coefficient Continuation: " + ' '.join(coefficient_continuation) + "\n")
-    binary_output = sign_bit + combination_field + exponent_extension + ''.join(coefficient_continuation)
-    hexadecimal_output = convert_output_to_hexadecimal(binary_output)
-    binary_output_with_spaces = sign_bit + " " +  combination_field + " " + exponent_extension + " " + ''.join([' '.join(bits) for bits in [coefficient_continuation[i:i+10] for i in range(0, len(coefficient_continuation), 10)]])
-    output_text.insert(tk.END, f"Binary Output: {binary_output_with_spaces}\n")
-    output_text.insert(tk.END, f"Hexadecimal Output: {hexadecimal_output}\n")
+    
+    if decimal_input == "":
+      output_text.insert(tk.END, f"Binary Output: 0 11111 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
+      output_text.insert(tk.END, f"Hexadecimal Output: 7C00000000000000\n")
+    else:    
+      binary_output = sign_bit + combination_field + exponent_extension + ''.join(coefficient_continuation)
+      hexadecimal_output = convert_output_to_hexadecimal(binary_output)
+      binary_output_with_spaces = sign_bit + " " +  combination_field + " " + exponent_extension + " " + ''.join([' '.join(bits) for bits in [coefficient_continuation[i:i+10] for i in range(0, len(coefficient_continuation), 10)]])
+      output_text.insert(tk.END, f"Binary Output: {binary_output_with_spaces}\n")
+      output_text.insert(tk.END, f"Hexadecimal Output: {hexadecimal_output}\n")
 
 # Function to convert and display output when Convert button is clicked
 def convert_and_display_output():
