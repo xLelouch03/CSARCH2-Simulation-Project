@@ -32,22 +32,24 @@ def limit_to_16_digits(decimal_input, exponent, rounding_type, sign_bit):
     
     if rounding_type == 'truncate':
       decimal_input = decimal_input[:16]
+
     elif rounding_type == 'floor':
+      if sign_bit == '1':
+        original_decimal = int(decimal_input[:16]) + 1
+        decimal_input = str(original_decimal)
       
-      #if sign_bit == 1 (negative)
-      decimal_input = decimal_input[:16]
-      
-      #else sign_bit == 0 (positive)
-      #truncate
+      elif sign_bit == '0':
+        decimal_input = decimal_input[:16]
+
     elif rounding_type == 'ceiling':
-      # Adjust the exponent if rounding changes the value
       
-      #if sign_bit == 0 (positive)
-      decimal_input = int(decimal_input[:16]) + 1
-      decimal_input = str(decimal_input)
+      if sign_bit == '0':
+        original_decimal = int(decimal_input[:16]) + 1
+        decimal_input = str(original_decimal)
       
-      #if sign_bit == 1 (negative)
-      #truncate
+      elif sign_bit == '1':
+        decimal_input = decimal_input[:16]
+
     elif rounding_type == 'nearest':
       original_decimal = int(decimal_input[:16])
       rounded_decimal = original_decimal + 1 if int(decimal_input[16]) >= 5 else original_decimal
