@@ -83,6 +83,7 @@ def remove_trailing_zeroes(decimal_input, exponent):
     decimal_input = decimal_input[0: len(decimal_input) - 1]
     exponent += 1
   return decimal_input, exponent
+
 #normalize the decimal
 # MAJOR FUNCTION
 def normalize_decimal(decimal_input, exponent, rounding_type, sign_bit):
@@ -155,10 +156,12 @@ def get_combination_field_and_exponent_extension(decimal_input, exponent):
     combi_field = "11" + exp_prime_binary[0:2] + msd_binary[3]
 
   exponent_extension = get_exponent_extension(exp_prime_binary)
+  
+  return combi_field, exponent_extension
 
   #TODO: Add other special cases
 def handle_special_cases(exponent):
-    if exponent >= 420:  # Positive infinity
+    if exponent >= 398:  # Positive infinity
         sign_bit = "0"
         combination_field = "11110"
         exponent_extension = "000000000"
@@ -168,7 +171,7 @@ def handle_special_cases(exponent):
           exp_prime = ""
           exp_prime_binary = ""
           decimal_input = "inf"
-    elif exponent <= -999:  # Negative infinity
+    elif exponent <= -398:  # Negative infinity
         sign_bit = "1"
         combination_field = "11111"
         exponent_extension = "000000000"
@@ -178,18 +181,10 @@ def handle_special_cases(exponent):
           exp_prime = ""
           exp_prime_binary = ""
           decimal_input = "-inf"  # Set normalized decimal to "-inf"
-    elif exponent < -398:  # Denormalized number
-        sign_bit = "0" if decimal_input.startswith("0.") else "1" # Set sign bit based on original decimal input
-        combination_field = "00000"
-        exponent_extension = "000000000"
-        coefficient_continuation = ["0000000000"] * 5
-        exp_prime = get_exponent_prime(exponent)
-        exp_prime_binary = "00000000000"
     else:
         return None  # No special case detected, return None
     
     return sign_bit, combination_field, exponent_extension, coefficient_continuation, exp_prime, exp_prime_binary, decimal_input
-  
 
 #calculate for the densely packed bcd of three digits
 # HELPER FUNCTION
@@ -373,9 +368,7 @@ def get_input_from_gui():
       
     if not all(char.isdigit() or char == '-' for char in decimal_input):
         # Set output fields for non-numeric input
-        display_output_in_gui("0", "", "", "11111", "00000000", ["00000000"]*5, "", "")
-        output_text.insert(tk.END, f"Binary Output: 0 11111 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
-        output_text.insert(tk.END, f"Hexadecimal Output: 7C00000000000000\n")
+        display_output_in_gui("0", "00000", "00000000", "11111", "00000000", ["00000000"]*5, "0000000000", "00000000000")
         return None, None, None
 
     if not validate_decimal_input(decimal_input):
@@ -401,9 +394,6 @@ def display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, 
     output_text.insert(tk.END, f"Combination Field: {combination_field}\n")
     output_text.insert(tk.END, f"Exponent Extension: {exponent_extension}\n")
     output_text.insert(tk.END, "Coefficient Continuation: " + ' '.join(coefficient_continuation) + "\n")
-    binary_output = sign_bit + combination_field + exponent_extension + ''.join(coefficient_continuation)
-    hexadecimal_output = convert_output_to_hexadecimal(binary_output)
-
     binary_output = sign_bit + combination_field + exponent_extension + ''.join(coefficient_continuation)
     hexadecimal_output = convert_output_to_hexadecimal(binary_output)
     binary_output_with_spaces = sign_bit + " " +  combination_field + " " + exponent_extension + " " + ''.join([' '.join(bits) for bits in [coefficient_continuation[i:i+10] for i in range(0, len(coefficient_continuation), 10)]])
