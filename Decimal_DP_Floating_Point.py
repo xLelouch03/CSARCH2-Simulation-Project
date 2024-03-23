@@ -1,3 +1,11 @@
+# CSARCH2 S13 Group 3
+# Members:
+# Bacosa, Gabriel
+# Jawali, Armina
+# Maristela, Joseph
+# Rejano, Hans
+# Serrato, Nico
+# 
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
@@ -386,7 +394,6 @@ def get_input_from_gui():
     if not all(char.isdigit() or char == '-' or char == '.' for char in decimal_input):
         # Set output fields for non-numeric input
       display_output_in_gui("0", "", "", "11111", "00000000", ["00000000"]*5, "", "")
-      
       return None, None, None
 
     if not validate_decimal_input(decimal_input):
@@ -493,7 +500,5 @@ output_text.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky=tk.NSEW)
 # Configure row and column weights
 root.grid_rowconfigure(5, weight=1)
 root.grid_columnconfigure((0,1), weight=1)
-
-
 
 root.mainloop()
