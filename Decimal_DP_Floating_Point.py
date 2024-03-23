@@ -366,7 +366,7 @@ def get_input_from_gui():
     rounding_type = rounding_combobox.get()
     
     if decimal_input == "0" or decimal_input == "-0":
-        display_output_in_gui("0", "", "", "00000", "00000000", ["00000000"]*5, "", "")
+        display_output_in_gui("0", "", "", "01000", "10001110", ["00000000"]*5, "", "")
         output_text.insert(tk.END, f"Binary Output: 0 00000 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
         output_text.insert(tk.END, f"Hexadecimal Output: 0000000000000000\n")
         return None, None, None
