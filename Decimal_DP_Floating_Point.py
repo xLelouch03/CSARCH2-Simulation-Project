@@ -364,7 +364,7 @@ def get_input_from_gui():
     rounding_type = rounding_combobox.get()
     
     if decimal_input == "0" or decimal_input == "-0":
-      display_output_in_gui("0", "0000000000000000", "0", "01000", "00000000", ["00000000"]*5, "398", "0110001110")
+      display_output_in_gui("0", "0000000000000000", "0", "01000", "00000000", ["00000000"]*5, "398", "10001110")
       return None, None, None
       
     if not all(char.isdigit() or char == '-' for char in decimal_input):
