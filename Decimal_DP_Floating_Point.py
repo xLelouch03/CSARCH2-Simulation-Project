@@ -22,40 +22,45 @@ def get_input_from_user():
 
 #limit the decimal to 16 digits by either adding leading zeroes or round off
 # HELPER FUNCTION
-def limit_to_16_digits(decimal_input, exponent, rounding_type):
+def limit_to_16_digits(decimal_input, exponent, rounding_type, sign_bit):
 
+  #If it's more than 16 digits, round the decimal to 16 digits
+  
+  if len(decimal_input) > 16:
+    #increase the exponent based on the number of digits after the 16th
+    exponent += (len(decimal_input) - 16)
+    
+    if rounding_type == 'truncate':
+      decimal_input = decimal_input[:16]
+    elif rounding_type == 'floor':
+      
+      #if sign_bit == 1 (negative)
+      decimal_input = decimal_input[:16]
+      
+      #else sign_bit == 0 (positive)
+      #truncate
+    elif rounding_type == 'ceiling':
+      # Adjust the exponent if rounding changes the value
+      
+      #if sign_bit == 0 (positive)
+      decimal_input = int(decimal_input[:16]) + 1
+      decimal_input = str(decimal_input)
+      
+      #if sign_bit == 1 (negative)
+      #truncate
+    elif rounding_type == 'nearest':
+      original_decimal = int(decimal_input[:16])
+      rounded_decimal = original_decimal + 1 if int(decimal_input[16]) >= 5 else original_decimal
+      decimal_input = str(rounded_decimal)
+    
+  #remove trailing zeroes that was made from rounding
+  decimal_input, exponent = remove_trailing_zeroes(decimal_input, exponent)
+      
   #if there is less than 16 digits, add leading zeroes
   if len(decimal_input) < 16:
     number_of_missing_digits = 16 - len(decimal_input)
     for i in range(number_of_missing_digits):
       decimal_input = "0" + decimal_input
-
-  #NOTE: else if it is more than 16 digits, round the decimal to 16 digits
-  
-  else:
-        # Implement rounding if the input decimal has more than 16 digits
-        if rounding_type == 'truncate':
-            decimal_input = decimal_input[:16]
-        elif rounding_type == 'floor':
-            decimal_input = decimal_input[:16]
-        elif rounding_type == 'ceiling':
-            # Adjust the exponent if rounding changes the value
-            original_decimal = int(decimal_input[:16])
-            rounded_decimal = original_decimal + 1
-            if rounded_decimal % 10 == 0:
-                exponent += 1
-            decimal_input = str(rounded_decimal)
-        elif rounding_type == 'nearest':
-            original_decimal = int(decimal_input[:16])
-            rounded_decimal = original_decimal + 1 if int(decimal_input[16]) >= 5 else original_decimal
-            if rounded_decimal % 10 == 0 and original_decimal % 10 != 9:
-                exponent += 1
-            decimal_input = str(rounded_decimal)
-
-    #TODO:Implement Rounding
-  # Ensure that the decimal is limited to 16 digits
-  if len(decimal_input) > 16:
-      decimal_input = decimal_input[:16]
 
   return decimal_input, exponent
 
@@ -73,9 +78,14 @@ def turn_decimal_positive(decimal_input):
   decimal_input = decimal_input[1:]
   return decimal_input
 
+def remove_trailing_zeroes(decimal_input, exponent):
+  while decimal_input[len(decimal_input) - 1] == '0':
+    decimal_input = decimal_input[0: len(decimal_input) - 1]
+    exponent += 1
+  return decimal_input, exponent
 #normalize the decimal
 # MAJOR FUNCTION
-def normalize_decimal(decimal_input, exponent, rounding_type):
+def normalize_decimal(decimal_input, exponent, rounding_type, sign_bit):
   decimal_point_location = decimal_input.find(".")
 
   #if a decimal point exists, move it to the rightmost and then remove it
@@ -86,16 +96,14 @@ def normalize_decimal(decimal_input, exponent, rounding_type):
     exponent -= len(right_of_decimal_point)
 
   #remove trailing zeroes
-  while decimal_input[len(decimal_input) - 1] == '0':
-    decimal_input = decimal_input[0: len(decimal_input) - 1]
-    exponent += 1
+  decimal_input, exponent = remove_trailing_zeroes(decimal_input, exponent)
 
   #remove leading zeroes
   while decimal_input[0] == '0':
     decimal_input = decimal_input[1:]
 
   #limit to 16 digits only
-  decimal_input, exponent = limit_to_16_digits(decimal_input, exponent, rounding_type)
+  decimal_input, exponent = limit_to_16_digits(decimal_input, exponent, rounding_type, sign_bit)
   
   return decimal_input, exponent
 
@@ -390,7 +398,7 @@ def convert_and_display_output():
     sign_bit = get_sign_bit(decimal_input) 
     if sign_bit == "1": 
         decimal_input = turn_decimal_positive(decimal_input)
-    decimal_input, exponent = normalize_decimal(decimal_input, ten_raised_to, rounding_type)
+    decimal_input, exponent = normalize_decimal(decimal_input, ten_raised_to, rounding_type, sign_bit)
     combination_field, exponent_extension = get_combination_field_and_exponent_extension(decimal_input, exponent)
     coefficient_continuation = get_coefficient_continuation(decimal_input)
     exp_prime = get_exponent_prime(exponent) 
