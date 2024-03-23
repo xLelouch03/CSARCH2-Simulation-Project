@@ -365,15 +365,12 @@ def get_input_from_gui():
     
     if decimal_input == "0" or decimal_input == "-0":
       display_output_in_gui("0", "0000000000000000", "0", "01000", "00000000", ["00000000"]*5, "398", "0110001110")
-      output_text.insert(tk.END, f"Binary Output: 0 01000 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
-      output_text.insert(tk.END, f"Hexadecimal Output: 0000000000000000\n")
       return None, None, None
       
     if not all(char.isdigit() or char == '-' for char in decimal_input):
         # Set output fields for non-numeric input
       display_output_in_gui("0", "", "", "11111", "00000000", ["00000000"]*5, "", "")
-      output_text.insert(tk.END, f"Binary Output: 0 11111 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
-      output_text.insert(tk.END, f"Hexadecimal Output: 7C000000000000000\n")
+      
       return None, None, None
 
     if not validate_decimal_input(decimal_input):
