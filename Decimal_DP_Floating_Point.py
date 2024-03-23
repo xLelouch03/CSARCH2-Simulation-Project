@@ -456,42 +456,48 @@ def save_output():
 
 # Create the root window
 root = tk.Tk()
-root.title("Decimal Converter")
+root.title("Decimal-64 Floating Point Converter")
 
 # Set the size of the window
 root.geometry("900x500") 
 
 # Input GUI elements
-decimal_label = tk.Label(root, text="Decimal:")
-decimal_label.grid(row=0, column=3)
+decimal_label = tk.Label(root, text="Decimal:", font=("Arial", 12))
+decimal_label.grid(row=0, column=0, padx=10, pady=5, sticky=tk.E)
 
-decimal_entry = tk.Entry(root)
-decimal_entry.grid(row=0, column=4)
+decimal_entry = tk.Entry(root, font=("Arial", 12))
+decimal_entry.grid(row=0, column=1, padx=10, pady=5, sticky=tk.W)
 
-exponent_label = tk.Label(root, text="10 raised to:")
-exponent_label.grid(row=1, column=3)
+exponent_label = tk.Label(root, text="10 raised to:", font=("Arial", 12))
+exponent_label.grid(row=1, column=0, padx=10, pady=5, sticky=tk.E)
 
-exponent_entry = tk.Entry(root)
-exponent_entry.grid(row=1, column=4)
+exponent_entry = tk.Entry(root, font=("Arial", 12))
+exponent_entry.grid(row=1, column=1, padx=10, pady=5, sticky=tk.W)
 
-rounding_label = tk.Label(root, text="Rounding Type:")
-rounding_label.grid(row=2, column=3)
+rounding_label = tk.Label(root, text="Rounding Type:", font=("Arial", 12))
+rounding_label.grid(row=2, column=0, padx=10, pady=5, sticky=tk.E)
 
 # Rounding type dropdown
-rounding_combobox = ttk.Combobox(root, values=["truncate", "floor", "ceiling", "nearest"])
-rounding_combobox.grid(row=2, column=4)
+rounding_combobox = ttk.Combobox(root, values=["truncate", "floor", "ceiling", "nearest"], font=("Arial", 12))
+rounding_combobox.grid(row=2, column=1, padx=10, pady=5, sticky=tk.W)
 rounding_combobox.current(0)  # Set the default value to "truncate"
 
 # Convert button for conversion and display output
-convert_button = tk.Button(root, text="Convert", command=convert_and_display_output)
-convert_button.grid(row=3, column=4)
+convert_button = tk.Button(root, text="Convert", command=convert_and_display_output, font=("Arial", 12))
+convert_button.grid(row=3, column=0, columnspan=2, padx=10, pady=5)
 
 # Save Output button to save the output
-save_button = tk.Button(root, text="Save Output", command=save_output)
-save_button.grid(row=4, column=4)
+save_button = tk.Button(root, text="Save Output", command=save_output, font=("Arial", 12))
+save_button.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
 
 # GUI element for output
-output_text = tk.Text(root, height=10, width=100)  
-output_text.grid(row=5, columnspan=10)
+output_text = tk.Text(root, height=10, width=100, font=("Arial", 12))  
+output_text.grid(row=5, column=0, columnspan=2, padx=10, pady=5, sticky=tk.NSEW)
+
+# Configure row and column weights
+root.grid_rowconfigure(5, weight=1)
+root.grid_columnconfigure((0,1), weight=1)
+
+
 
 root.mainloop()
