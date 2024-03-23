@@ -323,6 +323,9 @@ def get_coefficient_continuation(decimal_input):
 #multiply binary digits to their place value and return its corresponding hexadecimal value
 # HELPER FUNCTION
 def convert_four_binary_to_hexadecimal(four_binary_digits):
+  if len(four_binary_digits) != 4:
+        return '0'
+      
   eight, four, two, one = [int(digit) for digit in four_binary_digits]
   eight *= 8
   four *= 4
@@ -379,10 +382,8 @@ def get_input_from_gui():
     rounding_type = rounding_combobox.get()
     
     if decimal_input == "0" or decimal_input == "-0":
-        display_output_in_gui("0", "", "", "00000", "00000000", ["00000000"]*5, "", "")
-        output_text.insert(tk.END, f"Binary Output: 0 00000 000000000 0000000000 0000000000 0000000000 0000000000 0000000000\n")
-        output_text.insert(tk.END, f"Hexadecimal Output: 0000000000000000\n")
-        return None, None, None
+      display_output_in_gui("0", "0000000000000000", "0", "01000", "10001110", ["00000000"]*5, "398", "0110001110")
+      return None, None, None
       
     if exponent_input < "-398":
       output_text.insert(tk.END, f"Hexadecimal Output: 2238 0000 0000 0000")
@@ -390,8 +391,9 @@ def get_input_from_gui():
     
     if not all(char.isdigit() or char == '-' for char in decimal_input):
         # Set output fields for non-numeric input
-        display_output_in_gui("0", "00000", "00000000", "11111", "00000000", ["00000000"]*5, "0000000000", "00000000000")
-        return None, None, None
+      display_output_in_gui("0", "", "", "11111", "00000000", ["00000000"]*5, "", "")
+      
+      return None, None, None
 
     if not validate_decimal_input(decimal_input):
         return None, None, None
@@ -416,9 +418,11 @@ def display_output_in_gui(sign_bit, decimal_input, exponent, combination_field, 
     output_text.insert(tk.END, f"Combination Field: {combination_field}\n")
     output_text.insert(tk.END, f"Exponent Extension: {exponent_extension}\n")
     output_text.insert(tk.END, "Coefficient Continuation: " + ' '.join(coefficient_continuation) + "\n")
+    
     binary_output = sign_bit + combination_field + exponent_extension + ''.join(coefficient_continuation)
     hexadecimal_output = convert_output_to_hexadecimal(binary_output)
     binary_output_with_spaces = sign_bit + " " +  combination_field + " " + exponent_extension + " " + ''.join([' '.join(bits) for bits in [coefficient_continuation[i:i+10] for i in range(0, len(coefficient_continuation), 10)]])
+    
     output_text.insert(tk.END, f"Binary Output: {binary_output_with_spaces}\n")
     output_text.insert(tk.END, f"Hexadecimal Output: {hexadecimal_output}\n")
 
