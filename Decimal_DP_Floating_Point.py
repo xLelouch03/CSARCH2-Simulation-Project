@@ -1,8 +1,3 @@
-'''
-List of TODOs:
-    1. TODO: Implement Rounding
-    2. TODO: Add other special test cases for the combination field
-'''
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import filedialog
